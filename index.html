@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Machine 9 Cache Memory Simulator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">CSARCH2 Case 1 Project</p>
+          <h1>Machine 9 Cache Memory Simulator</h1>
+          <p class="subtitle">
+            Explore 8-way set associative cache behavior for LRU and MRU replacement strategies.
+          </p>
+        </div>
+        <div class="hero-badge">8-Way BSA</div>
+      </header>
+
+      <section class="panel controls-panel">
+        <h2>Simulation Controls</h2>
+        <form id="configForm" class="controls-grid">
+          <label>
+            Cache Blocks
+            <input id="cacheBlocks" type="number" min="8" step="8" value="16" />
+          </label>
+          <label>
+            Block Size (words)
+            <input id="blockSize" type="number" min="2" step="2" value="4" />
+          </label>
+          <label>
+            Replacement Policy
+            <select id="replacementPolicy">
+              <option value="lru">LRU</option>
+              <option value="mru">MRU</option>
+            </select>
+          </label>
+          <label>
+            Read Policy
+            <select id="readPolicy">
+              <option value="load-through">Load-through</option>
+              <option value="non-load-through">Non-load-through</option>
+            </select>
+          </label>
+          <label>
+            Test Case
+            <select id="testCase">
+              <option value="sequential">Test A – Sequential</option>
+              <option value="mid-repeat">Test B – Mid Repeat</option>
+              <option value="random">Test C – Random</option>
+            </select>
+          </label>
+          <label>
+            Random Seed
+            <input id="randomSeed" type="number" value="42" />
+          </label>
+          <label>
+            Animation Mode
+            <select id="animationMode">
+              <option value="final">Final Snapshot</option>
+              <option value="step">Step-by-step</option>
+            </select>
+          </label>
+          <label>
+            Cache Access Time (ns)
+            <input id="cacheAccessTime" type="number" min="1" step="1" value="1" />
+          </label>
+          <label>
+            Main Memory Access Time (ns)
+            <input id="mainMemoryAccessTime" type="number" min="1" step="1" value="100" />
+          </label>
+        </form>
+        <div class="button-row">
+          <button id="runButton" type="button">Run Simulation</button>
+          <button id="compareButton" type="button" class="secondary">Compare LRU vs MRU</button>
+          <button id="generateButton" type="button" class="secondary">Generate Sequence</button>
+          <button id="resetButton" type="button" class="ghost">Reset</button>
+          <button id="exportButton" type="button" class="ghost">Export Trace</button>
+        </div>
+        <div id="messageBox" class="message-box" aria-live="polite"></div>
+      </section>
+
+      <section class="panel stats-panel">
+        <h2>Statistics</h2>
+        <div id="statsGrid" class="stats-grid"></div>
+      </section>
+
+      <section class="panel main-panel">
+        <div class="panel-heading">
+          <h2>Cache Visualization</h2>
+          <div id="sequencePreview" class="sequence-preview"></div>
+        </div>
+        <div id="cacheVisualization" class="cache-visualization"></div>
+      </section>
+
+      <section class="panel trace-panel">
+        <div class="panel-heading">
+          <h2>Trace Log</h2>
+          <span class="hint">Each access reports the set, tag, hit/miss, and replacement outcome.</span>
+        </div>
+        <pre id="traceLog" class="trace-log"></pre>
+      </section>
+
+      <section class="panel comparison-panel">
+        <h2>Comparison Table</h2>
+        <div id="comparisonTable" class="comparison-table"></div>
+        <div id="comparisonCharts" class="comparison-charts"></div>
+      </section>
+    </div>
+
+    <script type="module" src="ui.js"></script>
+  </body>
+</html>

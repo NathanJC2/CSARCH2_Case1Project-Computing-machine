@@ -1,0 +1,17 @@
+Sample output for the Machine 9 Cache Memory Simulator
+====================================================
+Configuration:
+- Cache blocks: 16
+- Block size: 4 words
+- Replacement policy: LRU
+- Read policy: Load-through
+- Test case: Sequential
+
+Result:
+- Total accesses: 64
+- Hits: 34
+- Misses: 30
+- Hit rate: 53.13%
+- Miss rate: 46.88%
+- AMAT: 53.13 ns
+- Total time: 3390 ns
