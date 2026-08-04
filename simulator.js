@@ -77,7 +77,8 @@ export class Logger {
         const status = entry.hit ? "HIT" : "MISS";
         const replacement = entry.replaced ? `Evicted Block ${entry.victim}` : "No eviction";
         const inserted = entry.insertedWay !== null ? `Inserted in Way ${entry.insertedWay}` : "Cache unchanged";
-        return `Access ${entry.accessNumber}\nBlock ${entry.blockNumber}\nSet ${entry.setIndex}\nTag ${entry.tag}\n${status}\n${replacement}\n${inserted}\n---`;
+        const message = entry.message ? `\n${entry.message}` : "";
+        return `Access ${entry.accessNumber}\nBlock ${entry.blockNumber}\nSet ${entry.setIndex}\nTag ${entry.tag}\n${status}\n${replacement}\n${inserted}${message}\n---`;
       })
       .join("\n");
   }
@@ -91,6 +92,7 @@ export class Simulator {
       config.blockSize,
       config.replacementPolicy,
       config.readPolicy,
+      config.ways,
     );
     this.statistics = new Statistics(config.cacheAccessTime, config.mainMemoryAccessTime);
     this.logger = new Logger();
@@ -110,7 +112,7 @@ export class Simulator {
       const extended = Array.from({ length: 2 * blockCount }, (_, index) => index);
       const descending = Array.from({ length: blockCount }, (_, index) => blockCount - 1 - index);
       const extendedDescending = Array.from({ length: 2 * blockCount }, (_, index) => 2 * blockCount - 1 - index);
-      return [...ascending, ...extended, ...extended, ...descending, ...extendedDescending, ...extendedDescending];
+      return [...ascending, ...extended, ...extended, ...descending, ...extendedDescending];
     }
 
     const seed = this.config.randomSeed ?? 42;
@@ -135,7 +137,7 @@ export class Simulator {
     this.logger.clear();
   }
 
-  async runSimulation(animationMode = "final") {
+  async runSimulation(animationMode = "final", onStep = null) {
     this.reset();
     const sequence = this.generateSequence();
 
@@ -152,9 +154,17 @@ export class Simulator {
         victim: result.victim,
         replaced: result.replaced,
         insertedWay: result.insertedWay,
+        message: result.message,
       });
 
       if (animationMode === "step") {
+        if (typeof onStep === "function") {
+          try {
+            onStep({ step: step + 1, cache: this.cache, statistics: this.statistics, logger: this.logger, sequence });
+          } catch (err) {
+            // swallow errors from UI callback to keep simulation running
+          }
+        }
         await this.wait(220);
       }
     }

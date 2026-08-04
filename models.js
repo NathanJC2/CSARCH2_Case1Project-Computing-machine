@@ -62,12 +62,12 @@ export class CacheSet {
 }
 
 export class Cache {
-  constructor(cacheBlocks, blockSize, replacementPolicy, readPolicy, mainMemoryBlocks = 1024) {
+  constructor(cacheBlocks, blockSize, replacementPolicy, readPolicy, ways = 8, mainMemoryBlocks = 1024) {
     this.mainMemoryBlocks = mainMemoryBlocks;
     this.cacheBlocks = cacheBlocks;
     this.blockSize = blockSize;
-    this.ways = 8;
-    this.setCount = cacheBlocks / this.ways;
+    this.ways = ways;
+    this.setCount = Math.max(1, Math.floor(cacheBlocks / this.ways));
     this.replacementPolicy = replacementPolicy;
     this.readPolicy = readPolicy;
     this.sets = Array.from({ length: this.setCount }, (_, index) => new CacheSet(index, this.ways, this.replacementPolicy));
@@ -75,6 +75,7 @@ export class Cache {
   }
 
   reset() {
+    this.setCount = Math.max(1, Math.floor(this.cacheBlocks / this.ways));
     this.sets = Array.from({ length: this.setCount }, (_, index) => new CacheSet(index, this.ways, this.replacementPolicy));
     this.mainMemory = Array.from({ length: this.mainMemoryBlocks }, (_, blockNumber) => new MemoryBlock(blockNumber, this.blockSize));
   }
@@ -130,6 +131,7 @@ export class Cache {
       result.insertedWay = victimIndex;
     } else {
       result.insertedWay = null;
+      result.message = "Miss (non-load-through): block not loaded into cache";
     }
 
     return result;
