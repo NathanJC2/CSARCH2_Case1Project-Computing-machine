@@ -1,7 +1,7 @@
 # Machine 9 Cache Memory Simulator
 ## Project Overview
 ---
-### [Clickable Text](https://nathanjc2.github.io/CSARCH2_Case1Project-Computing-machine/ "Deployment Link")
+### [Deployment Link](https://nathanjc2.github.io/CSARCH2_Case1Project-Computing-machine/ "Deployment Link")
 ### Demo Link:
 ---
 This project is a web-based simulator for Machine 9, an 8-way set-associative cache memory system. It compares Least Recently Used (LRU) and Most Recently Used (MRU) replacement behavior using the same access patterns. The simulator is built with modular JavaScript and provides a visual cache display, step-by-step or final snapshot execution, a detailed trace log, and summary statistics.
