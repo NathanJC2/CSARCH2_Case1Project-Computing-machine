@@ -90,6 +90,56 @@ label {
   color: var(--muted);
 }
 
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.control-label {
+  color: var(--muted);
+}
+
+.control-hint {
+  font-size: 0.82rem;
+  color: rgba(135, 164, 202, 0.8);
+}
+
+.stepper {
+  display: grid;
+  grid-template-columns: 44px minmax(72px, 1fr) 44px;
+  gap: 8px;
+  align-items: center;
+}
+
+.stepper button {
+  width: 44px;
+  padding: 10px 0;
+  border-radius: 10px;
+  line-height: 1;
+}
+
+.stepper-value {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--panel-2);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.stepper button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 input,
 select,
 button {

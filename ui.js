@@ -134,8 +134,14 @@ export class Visualizer {
 
 export class App {
   constructor() {
-    this.cacheBlocksInput = document.getElementById("cacheBlocks");
-    this.blockSizeInput = document.getElementById("blockSize");
+    this.cacheBlocksValue = 4;
+    this.blockSizeValue = 2;
+    this.cacheBlocksDecreaseButton = document.getElementById("cacheBlocksDecrease");
+    this.cacheBlocksIncreaseButton = document.getElementById("cacheBlocksIncrease");
+    this.cacheBlocksValueDisplay = document.getElementById("cacheBlocksValue");
+    this.blockSizeDecreaseButton = document.getElementById("blockSizeDecrease");
+    this.blockSizeIncreaseButton = document.getElementById("blockSizeIncrease");
+    this.blockSizeValueDisplay = document.getElementById("blockSizeValue");
     this.replacementPolicySelect = document.getElementById("replacementPolicy");
     this.readPolicySelect = document.getElementById("readPolicy");
     this.testCaseSelect = document.getElementById("testCase");
@@ -162,11 +168,16 @@ export class App {
     this.currentSimulator = null;
     this.currentTrace = "";
     this.bindEvents();
+    this.syncStepperDisplays();
     this.updateMessage("Ready to simulate.");
     this.generatePreview();
   }
 
   bindEvents() {
+    this.cacheBlocksDecreaseButton.addEventListener("click", () => this.decreasePowerOfTwo("cacheBlocks"));
+    this.cacheBlocksIncreaseButton.addEventListener("click", () => this.increasePowerOfTwo("cacheBlocks"));
+    this.blockSizeDecreaseButton.addEventListener("click", () => this.decreasePowerOfTwo("blockSize"));
+    this.blockSizeIncreaseButton.addEventListener("click", () => this.increasePowerOfTwo("blockSize"));
     this.runButton.addEventListener("click", () => this.handleRun());
     this.compareButton.addEventListener("click", () => this.handleCompare());
     this.generateButton.addEventListener("click", () => this.generatePreview());
@@ -179,8 +190,8 @@ export class App {
   }
 
   getConfig() {
-    const cacheBlocks = this.normalizeCacheBlocks(Number(this.cacheBlocksInput.value));
-    const blockSize = this.normalizeBlockSize(Number(this.blockSizeInput.value));
+    const cacheBlocks = this.normalizeCacheBlocks(this.cacheBlocksValue);
+    const blockSize = this.normalizeBlockSize(this.blockSizeValue);
     const replacementPolicy = createDefaultPolicy(this.replacementPolicySelect.value);
     const readPolicy = this.readPolicySelect.value;
     const testCase = this.testCaseSelect.value;
@@ -207,7 +218,7 @@ export class App {
   normalizeCacheBlocks(value) {
     // minimum of 4 blocks and round up to the next power of 2
     if (!Number.isFinite(value) || value < 4) {
-      return 16;
+      return 4;
     }
     return this.nextPowerOfTwo(value);
   }
@@ -215,7 +226,7 @@ export class App {
   normalizeBlockSize(value) {
     // minimum of 2 words and round up to the next power of 2
     if (!Number.isFinite(value) || value < 2) {
-      return 4;
+      return 2;
     }
     return this.nextPowerOfTwo(value);
   }
@@ -226,6 +237,48 @@ export class App {
       nextValue *= 2;
     }
     return nextValue;
+  }
+
+  previousPowerOfTwo(value, minimumValue) {
+    if (!Number.isFinite(value)) {
+      return minimumValue;
+    }
+
+    if (value <= minimumValue) {
+      return minimumValue;
+    }
+
+    let previousValue = minimumValue;
+    while (previousValue * 2 < value) {
+      previousValue *= 2;
+    }
+
+    return previousValue;
+  }
+
+  syncStepperDisplays() {
+    this.cacheBlocksValueDisplay.textContent = String(this.cacheBlocksValue);
+    this.blockSizeValueDisplay.textContent = String(this.blockSizeValue);
+    this.cacheBlocksDecreaseButton.disabled = this.cacheBlocksValue <= 4;
+    this.blockSizeDecreaseButton.disabled = this.blockSizeValue <= 2;
+  }
+
+  increasePowerOfTwo(controlName) {
+    if (controlName === "cacheBlocks") {
+      this.cacheBlocksValue = this.nextPowerOfTwo(this.cacheBlocksValue + 1);
+    } else if (controlName === "blockSize") {
+      this.blockSizeValue = this.nextPowerOfTwo(this.blockSizeValue + 1);
+    }
+    this.syncStepperDisplays();
+  }
+
+  decreasePowerOfTwo(controlName) {
+    if (controlName === "cacheBlocks") {
+      this.cacheBlocksValue = this.previousPowerOfTwo(this.cacheBlocksValue, 4);
+    } else if (controlName === "blockSize") {
+      this.blockSizeValue = this.previousPowerOfTwo(this.blockSizeValue, 2);
+    }
+    this.syncStepperDisplays();
   }
 
   async handleRun() {
@@ -282,8 +335,8 @@ export class App {
   }
 
   handleReset() {
-    this.cacheBlocksInput.value = "16";
-    this.blockSizeInput.value = "4";
+    this.cacheBlocksValue = 4;
+    this.blockSizeValue = 2;
     this.replacementPolicySelect.value = "lru";
     this.readPolicySelect.value = "load-through";
     this.testCaseSelect.value = "sequential";
@@ -291,7 +344,8 @@ export class App {
     this.animationModeSelect.value = "final";
     this.cacheAccessTimeInput.value = "1";
     this.mainMemoryAccessTimeInput.value = "100";
-    this.visualizer.renderCache(new Cache(16, 4, new LRUPolicy(), "load-through", 8));
+    this.syncStepperDisplays();
+    this.visualizer.renderCache(new Cache(4, 2, new LRUPolicy(), "load-through", 8));
     this.visualizer.renderStats(new Statistics(1, 100));
     this.visualizer.renderTrace(new Logger());
     this.visualizer.renderSequencePreview([]);

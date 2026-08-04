@@ -22,14 +22,24 @@
       <section class="panel controls-panel">
         <h2>Simulation Controls</h2>
         <form id="configForm" class="controls-grid">
-          <label>
-            Cache Blocks
-            <input id="cacheBlocks" type="number" min="4" step="1" value="16" />
-          </label>
-          <label>
-            Block Size (words)
-            <input id="blockSize" type="number" min="2" step="1" value="4" />
-          </label>
+          <div class="control-group">
+            <span class="control-label">Cache Blocks</span>
+            <span class="control-hint">Minimum 4 blocks, power of 2 only</span>
+            <div class="stepper" data-stepper="cacheBlocks">
+              <button id="cacheBlocksDecrease" type="button" aria-label="Decrease cache blocks">−</button>
+              <span id="cacheBlocksValue" class="stepper-value" aria-live="polite">4</span>
+              <button id="cacheBlocksIncrease" type="button" aria-label="Increase cache blocks">+</button>
+            </div>
+          </div>
+          <div class="control-group">
+            <span class="control-label">Block Size (Words)</span>
+            <span class="control-hint">Minimum 2 words, power of 2 only</span>
+            <div class="stepper" data-stepper="blockSize">
+              <button id="blockSizeDecrease" type="button" aria-label="Decrease block size">−</button>
+              <span id="blockSizeValue" class="stepper-value" aria-live="polite">2</span>
+              <button id="blockSizeIncrease" type="button" aria-label="Increase block size">+</button>
+            </div>
+          </div>
           <label>
             Replacement Policy
             <select id="replacementPolicy">
