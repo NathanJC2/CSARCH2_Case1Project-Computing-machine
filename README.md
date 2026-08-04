@@ -74,6 +74,8 @@ Generates 64 random block accesses in the range 0 to 1023.
 - [models.js](models.js) - cache, set, and memory data structures
 - [policies.js](policies.js) - LRU and MRU replacement policies
 
+## Analysis
+
 ## Images/Screenshots
 
 ### Test Case A (16 blocks, 16 words)
