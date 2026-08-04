@@ -48,13 +48,13 @@ export class Visualizer {
   renderStats(statistics) {
     this.statsGrid.innerHTML = "";
     const items = [
-      { label: "Total Accesses", value: statistics.totalAccesses },
-      { label: "Hits", value: statistics.hits },
-      { label: "Misses", value: statistics.misses },
-      { label: "Hit Rate", value: `${statistics.getHitRate().toFixed(2)}%` },
-      { label: "Miss Rate", value: `${statistics.getMissRate().toFixed(2)}%` },
-      { label: "AMAT", value: `${statistics.getAmat().toFixed(2)} ns` },
-      { label: "Total Time", value: `${statistics.totalTime} ns` },
+      { label: "Total memory access count", value: statistics.totalAccesses },
+      { label: "Cache hit count", value: statistics.hits },
+      { label: "Cache miss count", value: statistics.misses },
+      { label: "Cache hit rate", value: `${statistics.getHitRate().toFixed(2)}%` },
+      { label: "Cache miss rate", value: `${statistics.getMissRate().toFixed(2)}%` },
+      { label: "Average Memory Access Time", value: `${statistics.getAmat().toFixed(2)} ns` },
+      { label: "Total memory access time", value: `${statistics.totalTime} ns` },
     ];
 
     items.forEach((item) => {
@@ -186,6 +186,7 @@ export class App {
     const testCase = this.testCaseSelect.value;
     const randomSeed = Number(this.randomSeedInput.value);
     const animationMode = this.animationModeSelect.value;
+    const ways = 8;
     const cacheAccessTime = Number(this.cacheAccessTimeInput.value) || 1;
     const mainMemoryAccessTime = Number(this.mainMemoryAccessTimeInput.value) || 100;
 
@@ -195,6 +196,7 @@ export class App {
       replacementPolicy,
       readPolicy,
       testCase,
+      ways,
       randomSeed,
       animationMode,
       cacheAccessTime,
@@ -206,8 +208,8 @@ export class App {
     if (!Number.isFinite(value) || value < 8) {
       return 16;
     }
-    const powerOfTwo = this.nextPowerOfTwo(value);
-    return powerOfTwo >= 8 ? powerOfTwo : 8;
+    const compatibleValue = Math.ceil(value / 8) * 8;
+    return compatibleValue >= 8 ? compatibleValue : 8;
   }
 
   normalizeBlockSize(value) {
@@ -230,7 +232,13 @@ export class App {
     this.currentSimulator = new Simulator(config);
     this.updateMessage(`Running ${config.testCase} with ${config.replacementPolicy.name} and ${config.readPolicy}.`);
 
-    const result = await this.currentSimulator.runSimulation(config.animationMode);
+    const onStep = config.animationMode === "step" ? ({ cache, statistics, logger }) => {
+      this.visualizer.renderCache(cache);
+      this.visualizer.renderStats(statistics);
+      this.visualizer.renderTrace(logger);
+    } : null;
+
+    const result = await this.currentSimulator.runSimulation(config.animationMode, onStep);
     this.visualizer.renderCache(result.cache);
     this.visualizer.renderStats(result.statistics);
     this.visualizer.renderTrace(result.logger);
@@ -247,8 +255,14 @@ export class App {
     const lruSimulator = new Simulator(lruConfig);
     const mruSimulator = new Simulator(mruConfig);
 
-    const lruResult = await lruSimulator.runSimulation("final");
-    const mruResult = await mruSimulator.runSimulation("final");
+    const onStep = config.animationMode === "step" ? ({ cache, statistics, logger }) => {
+      this.visualizer.renderCache(cache);
+      this.visualizer.renderStats(statistics);
+      this.visualizer.renderTrace(logger);
+    } : null;
+
+    const lruResult = await lruSimulator.runSimulation(config.animationMode === "step" ? "step" : "final", onStep);
+    const mruResult = await mruSimulator.runSimulation(config.animationMode === "step" ? "step" : "final", onStep);
 
     this.visualizer.renderCache(mruResult.cache);
     this.visualizer.renderStats(mruResult.statistics);
@@ -276,7 +290,7 @@ export class App {
     this.animationModeSelect.value = "final";
     this.cacheAccessTimeInput.value = "1";
     this.mainMemoryAccessTimeInput.value = "100";
-    this.visualizer.renderCache(new Cache(16, 4, new LRUPolicy(), "load-through"));
+    this.visualizer.renderCache(new Cache(16, 4, new LRUPolicy(), "load-through", 8));
     this.visualizer.renderStats(new Statistics(1, 100));
     this.visualizer.renderTrace(new Logger());
     this.visualizer.renderSequencePreview([]);

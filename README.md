@@ -1,103 +1,99 @@
 # Machine 9 Cache Memory Simulator
 
+## Change Log
+
+- Cache misses now always load the referenced block into the selected cache line, so the cache state and trace stay consistent on every miss.
+- The mid-repeat test sequence now ends with the extended descending pattern twice, matching the intended access pattern.
+- LRU and MRU now reuse a shared `findEmptyLine` helper in the parent replacement-policy class to remove duplicated empty-line checks.
+- The README was updated to reflect the current Machine 9 scope, file structure, and simulator behavior.
+
 ## Project Overview
 
-This project implements a web-based simulator for Machine 9, an 8-way set associative cache memory system. It compares the behavior of two replacement policies, Least Recently Used (LRU) and Most Recently Used (MRU), using the same memory access patterns. The simulator is built with modular, object-oriented JavaScript and includes a visual cache display, step-by-step or final-view execution modes, a detailed trace log, and summary statistics.
+This project is a web-based simulator for Machine 9, an 8-way set-associative cache memory system. It compares Least Recently Used (LRU) and Most Recently Used (MRU) replacement behavior using the same access patterns. The simulator is built with modular JavaScript and provides a visual cache display, step-by-step or final snapshot execution, a detailed trace log, and summary statistics.
 
-## Machine Specifications
+## Machine 9 Specifications
 
-- Main memory: 1024 memory blocks
+- Main memory size: 1024 blocks
 - Cache organization: 8-way set associative
-- Cache line contents: valid bit, tag, block number, data words, and replacement metadata
-- Supported replacement policies: LRU and MRU
-- Supported read policies: non-load-through and load-through
+- Cache block count: configurable
+- Block size: configurable in words
+- Replacement policies: LRU and MRU
+- Read policy selector: load-through and non-load-through
+- Test cases: sequential, mid-repeat, and random
+- Random seed support for reproducible runs
+- Cache and main memory access time inputs
+- Animation mode: final snapshot or step-by-step trace
 
-## Configurable Parameters
+## What the Simulator Shows
 
-Users can configure:
+- Cache state visualization with valid bits, tags, block numbers, and replacement metadata
+- Step-by-step trace or final cache snapshot
+- Text trace log for every access
+- Statistics for total accesses, hits, misses, hit rate, miss rate, AMAT, and total memory access time
 
-- Number of cache blocks
-- Block size (in words)
-- Replacement policy
-- Read policy
-- Test case selection
-- Random seed for reproducibility
-- Cache and main memory access times
+## How the Cache Works
 
-## Cache Organization
-
-The simulator uses the standard set-associative mapping formula:
+The simulator uses set-associative mapping with 8 ways per set.
 
 - Number of sets = total cache blocks / 8
-- Set index = memory block number mod number of sets
-- Tag = memory block number / number of sets
+- Set index = block number mod number of sets
+- Tag = block number / number of sets
 
-When a set is full, the selected replacement policy determines which line is evicted.
+When a set has no free line, the selected replacement policy determines the victim line.
 
-## Replacement Algorithms
+## Replacement Policies
 
 ### Least Recently Used (LRU)
 
-LRU replaces the line that has gone the longest without being accessed.
+LRU evicts the line that has gone the longest without being accessed.
 
 ### Most Recently Used (MRU)
 
-MRU replaces the line that was accessed most recently.
+MRU evicts the line that was accessed most recently.
 
-## Read Policies
+## Read Policy Behavior
 
-- Non-load-through: the simulator does not populate the cache line with the block data during a miss.
-- Load-through: the simulator loads the accessed block into the cache on a miss.
+- Load-through: the accessed block is inserted into cache on a miss.
+- Non-load-through: the simulator still records the miss and populates the selected cache line so the cache visualization and trace remain synchronized with the current model.
 
-## Screenshots
+## Test Cases
 
-Placeholder section for screenshots and demo images.
+### Test A - Sequential
+
+Accesses blocks from 0 to 2n - 1, then repeats the same sequence.
+
+### Test B - Mid Repeat
+
+Uses a forward and reverse access pattern with repeated ranges to stress the cache and replacement policy.
+
+### Test C - Random
+
+Generates 64 random block accesses in the range 0 to 1023.
+
+## Sample Results
+
+The sample output files in [docs/sample-output.txt](docs/sample-output.txt) and [docs/sample-trace-log.txt](docs/sample-trace-log.txt) show the expected reporting format.
 
 ## How to Run
 
-1. Open the project folder in a browser.
-2. Launch index.html directly or use a local static server.
-3. Configure the parameters.
-4. Run a simulation or compare LRU and MRU.
+1. Open the project folder in a browser or serve it with a local static server.
+2. Open [index.html](index.html).
+3. Configure the cache, policy, and test parameters.
+4. Run a simulation, compare LRU vs MRU, or export the trace.
 
 ## Project Structure
 
-- index.html – application shell and UI layout
-- styles.css – visual styling and responsive layout
-- app.js – simulator engine, policies, visualization, and controls
-- docs/sample-output.txt – sample statistics output
-- docs/sample-trace-log.txt – sample trace log
+- [index.html](index.html) - application shell and controls
+- [styles.css](styles.css) - visual styling and responsive layout
+- [ui.js](ui.js) - UI wiring, events, and rendering
+- [simulator.js](simulator.js) - simulation engine and test-sequence generation
+- [models.js](models.js) - cache, set, and memory data structures
+- [policies.js](policies.js) - LRU and MRU replacement policies
+- [docs/sample-output.txt](docs/sample-output.txt) - sample statistics output
+- [docs/sample-trace-log.txt](docs/sample-trace-log.txt) - sample trace log
 
-## Analysis of Test Case A
+## Notes
 
-Test Case A uses a sequential access pattern that repeats from 0 to $2n - 1$ twice, where $n$ is the total number of cache blocks. This pattern is useful for observing how a cache behaves when memory is accessed in a linear, predictable order.
-
-## Analysis of Test Case B
-
-Test Case B uses a mixed access pattern involving forward and backward traversals with repeated ranges. It is helpful for observing how the chosen replacement policy behaves under more complex locality.
-
-## Analysis of Test Case C
-
-Test Case C generates 64 random accesses between 0 and 1023. This case is useful for measuring average performance under a more irregular access distribution.
-
-## Comparison between LRU and MRU
-
-In general:
-
-- LRU tends to perform better when recent access history is a good predictor of future access.
-- MRU may perform better for access patterns that repeatedly revisit a small set of recently used blocks.
-
-## Observed Advantages
-
-- LRU is often intuitive and predictable.
-- MRU can outperform LRU in some repeated-access patterns.
-- The simulator makes these differences easy to inspect visually.
-
-## Observed Disadvantages
-
-- MRU may evict blocks that are still likely to be reused soon.
-- LRU can be less effective when access patterns are less sequential and more bursty.
-
-## Conclusion
-
-The simulator provides a practical and educational way to explore 8-way set associative cache behavior. It demonstrates how cache organization, replacement policy, and access patterns affect hit rate, miss rate, AMAT, and total memory access time.
+- The project focuses on Machine 9 only.
+- The sample outcomes depend on the selected cache size, block size, access times, read policy, and random seed.
+- The simulator is intended to support analysis, screenshots, and a walkthrough video for the project submission.
