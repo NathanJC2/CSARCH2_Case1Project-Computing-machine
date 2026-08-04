@@ -205,11 +205,11 @@ export class App {
   }
 
   normalizeCacheBlocks(value) {
-    if (!Number.isFinite(value) || value < 8) {
+    if (!Number.isFinite(value) || value < 4) {
       return 16;
     }
     const compatibleValue = Math.ceil(value / 8) * 8;
-    return compatibleValue >= 8 ? compatibleValue : 8;
+    return compatibleValue >= 4 ? compatibleValue : 4;
   }
 
   normalizeBlockSize(value) {
