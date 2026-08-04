@@ -1,12 +1,4 @@
 # Machine 9 Cache Memory Simulator
-
-## Change Log
-
-- Cache misses now always load the referenced block into the selected cache line, so the cache state and trace stay consistent on every miss.
-- The mid-repeat test sequence now ends with the extended descending pattern twice, matching the intended access pattern.
-- LRU and MRU now reuse a shared `findEmptyLine` helper in the parent replacement-policy class to remove duplicated empty-line checks.
-- The README was updated to reflect the current Machine 9 scope, file structure, and simulator behavior.
-
 ## Project Overview
 
 This project is a web-based simulator for Machine 9, an 8-way set-associative cache memory system. It compares Least Recently Used (LRU) and Most Recently Used (MRU) replacement behavior using the same access patterns. The simulator is built with modular JavaScript and provides a visual cache display, step-by-step or final snapshot execution, a detailed trace log, and summary statistics.
@@ -70,17 +62,6 @@ Uses a forward and reverse access pattern with repeated ranges to stress the cac
 
 Generates 64 random block accesses in the range 0 to 1023.
 
-## Sample Results
-
-The sample output files in [docs/sample-output.txt](docs/sample-output.txt) and [docs/sample-trace-log.txt](docs/sample-trace-log.txt) show the expected reporting format.
-
-## How to Run
-
-1. Open the project folder in a browser or serve it with a local static server.
-2. Open [index.html](index.html).
-3. Configure the cache, policy, and test parameters.
-4. Run a simulation, compare LRU vs MRU, or export the trace.
-
 ## Project Structure
 
 - [index.html](index.html) - application shell and controls
@@ -89,8 +70,6 @@ The sample output files in [docs/sample-output.txt](docs/sample-output.txt) and 
 - [simulator.js](simulator.js) - simulation engine and test-sequence generation
 - [models.js](models.js) - cache, set, and memory data structures
 - [policies.js](policies.js) - LRU and MRU replacement policies
-- [docs/sample-output.txt](docs/sample-output.txt) - sample statistics output
-- [docs/sample-trace-log.txt](docs/sample-trace-log.txt) - sample trace log
 
 ## Notes
 
