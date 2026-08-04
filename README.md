@@ -76,6 +76,24 @@ Generates 64 random block accesses in the range 0 to 1023.
 
 ## Analysis
 
+Test Case A – Sequential Sequence
+
+The Sequential Sequence test case evaluates cache performance using consecutive memory accesses that repeat after reaching a certain range. During the first execution, the cache is initially empty, resulting in compulsory cache misses while the required memory blocks are loaded. Once the cache becomes full, blocks are replaced according to the selected replacement policy.
+
+With the LRU policy, blocks that have not been accessed for the longest time are removed. Since the access pattern continuously moves forward before repeating, many previously loaded blocks are evicted before they can be reused, resulting in a high number of cache misses. In contrast, MRU replaces the most recently used blocks, allowing older blocks to remain in the cache longer. For this sequential access pattern, MRU achieves more cache hits, fewer cache misses, and lower Average Memory Access Time (AMAT) than LRU. This shows that MRU performs better for predictable sequential memory accesses.
+
+Test Case B – Mid Repeat Sequence
+
+The Mid Repeat Sequence demonstrates temporal locality by repeatedly accessing the same group of memory blocks before reversing the order. After the initial cache misses while filling the cache, the repeated accesses benefit from data already stored in the cache.
+
+LRU performs well because it keeps recently accessed blocks in the cache, allowing repeated accesses to become cache hits. This results in a higher hit rate, fewer cache misses, and lower AMAT. On the other hand, MRU frequently removes the most recently used blocks, which are often needed again shortly afterward. This increases the number of cache misses and reduces overall performance. Therefore, LRU is more effective for workloads with strong temporal locality.
+
+Test Case C – Random Sequence
+
+The Random Sequence generates unpredictable memory accesses with little or no temporal or spatial locality. Since memory blocks are accessed randomly, previously loaded data is less likely to be reused before being replaced.
+
+Both LRU and MRU produce similar results because neither replacement policy can accurately predict which blocks will be accessed next. Consequently, the cache experiences more misses, fewer hits, and higher AMAT compared to the Mid Repeat Sequence. This test demonstrates that cache replacement policies are most effective when memory access patterns exhibit locality, while their performance becomes nearly identical for random workloads.
+
 ## Images/Screenshots
 
 ### Test Case A (16 blocks, 16 words)
