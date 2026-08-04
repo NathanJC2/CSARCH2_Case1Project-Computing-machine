@@ -134,8 +134,10 @@ export class Visualizer {
 
 export class App {
   constructor() {
-    this.cacheBlocksValue = 4;
-    this.blockSizeValue = 2;
+    this.minimumCacheBlocks = 4;
+    this.minimumBlockSize = 2;
+    this.cacheBlocksValue = this.minimumCacheBlocks;
+    this.blockSizeValue = this.minimumBlockSize;
     this.cacheBlocksDecreaseButton = document.getElementById("cacheBlocksDecrease");
     this.cacheBlocksIncreaseButton = document.getElementById("cacheBlocksIncrease");
     this.cacheBlocksValueDisplay = document.getElementById("cacheBlocksValue");
@@ -217,16 +219,16 @@ export class App {
 
   normalizeCacheBlocks(value) {
     // minimum of 4 blocks and round up to the next power of 2
-    if (!Number.isFinite(value) || value < 4) {
-      return 4;
+    if (!Number.isFinite(value) || value < this.minimumCacheBlocks) {
+      return this.minimumCacheBlocks;
     }
     return this.nextPowerOfTwo(value);
   }
 
   normalizeBlockSize(value) {
     // minimum of 2 words and round up to the next power of 2
-    if (!Number.isFinite(value) || value < 2) {
-      return 2;
+    if (!Number.isFinite(value) || value < this.minimumBlockSize) {
+      return this.minimumBlockSize;
     }
     return this.nextPowerOfTwo(value);
   }
@@ -259,24 +261,35 @@ export class App {
   syncStepperDisplays() {
     this.cacheBlocksValueDisplay.textContent = String(this.cacheBlocksValue);
     this.blockSizeValueDisplay.textContent = String(this.blockSizeValue);
-    this.cacheBlocksDecreaseButton.disabled = this.cacheBlocksValue <= 4;
-    this.blockSizeDecreaseButton.disabled = this.blockSizeValue <= 2;
+    const cacheBlocksAtMinimum = this.cacheBlocksValue <= this.minimumCacheBlocks;
+    const blockSizeAtMinimum = this.blockSizeValue <= this.minimumBlockSize;
+
+    this.cacheBlocksDecreaseButton.disabled = cacheBlocksAtMinimum;
+    this.cacheBlocksDecreaseButton.setAttribute("aria-disabled", String(cacheBlocksAtMinimum));
+    this.blockSizeDecreaseButton.disabled = blockSizeAtMinimum;
+    this.blockSizeDecreaseButton.setAttribute("aria-disabled", String(blockSizeAtMinimum));
   }
 
   increasePowerOfTwo(controlName) {
     if (controlName === "cacheBlocks") {
-      this.cacheBlocksValue = this.nextPowerOfTwo(this.cacheBlocksValue + 1);
+      this.cacheBlocksValue = this.nextPowerOfTwo(this.cacheBlocksValue * 2);
     } else if (controlName === "blockSize") {
-      this.blockSizeValue = this.nextPowerOfTwo(this.blockSizeValue + 1);
+      this.blockSizeValue = this.nextPowerOfTwo(this.blockSizeValue * 2);
     }
     this.syncStepperDisplays();
   }
 
   decreasePowerOfTwo(controlName) {
     if (controlName === "cacheBlocks") {
-      this.cacheBlocksValue = this.previousPowerOfTwo(this.cacheBlocksValue, 4);
+      if (this.cacheBlocksValue <= this.minimumCacheBlocks) {
+        return;
+      }
+      this.cacheBlocksValue = this.previousPowerOfTwo(this.cacheBlocksValue, this.minimumCacheBlocks);
     } else if (controlName === "blockSize") {
-      this.blockSizeValue = this.previousPowerOfTwo(this.blockSizeValue, 2);
+      if (this.blockSizeValue <= this.minimumBlockSize) {
+        return;
+      }
+      this.blockSizeValue = this.previousPowerOfTwo(this.blockSizeValue, this.minimumBlockSize);
     }
     this.syncStepperDisplays();
   }
@@ -335,8 +348,8 @@ export class App {
   }
 
   handleReset() {
-    this.cacheBlocksValue = 4;
-    this.blockSizeValue = 2;
+    this.cacheBlocksValue = this.minimumCacheBlocks;
+    this.blockSizeValue = this.minimumBlockSize;
     this.replacementPolicySelect.value = "lru";
     this.readPolicySelect.value = "load-through";
     this.testCaseSelect.value = "sequential";
