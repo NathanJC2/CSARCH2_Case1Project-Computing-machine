@@ -50,15 +50,15 @@ MRU evicts the line that was accessed most recently.
 
 ## Test Cases
 
-### Test A - Sequential
+### Test Case A - Sequential
 
 Accesses blocks from 0 to 2n - 1, then repeats the same sequence.
 
-### Test B - Mid Repeat
+### Test Case B - Mid Repeat
 
 Uses a forward and reverse access pattern with repeated ranges to stress the cache and replacement policy.
 
-### Test C - Random
+### Test Case C - Random
 
 Generates 64 random block accesses in the range 0 to 1023.
 
@@ -70,6 +70,23 @@ Generates 64 random block accesses in the range 0 to 1023.
 - [simulator.js](simulator.js) - simulation engine and test-sequence generation
 - [models.js](models.js) - cache, set, and memory data structures
 - [policies.js](policies.js) - LRU and MRU replacement policies
+
+## Images/Screenshots
+
+### Test Case A (16 blocks, 16 words)
+<img width="1353" height="354" alt="image" src="https://github.com/user-attachments/assets/9432ec97-230f-4920-a64b-048a5b0b7123" />
+<img width="1345" height="557" alt="image" src="https://github.com/user-attachments/assets/95ee54ce-5f0a-4de9-90fb-91f946116e29" />
+<img width="1348" height="743" alt="image" src="https://github.com/user-attachments/assets/0117af7c-57d4-4c8c-8e4f-a40576d1a75c" />
+
+### Test Case B (16 blocks, 16 words)
+<img width="1350" height="342" alt="image" src="https://github.com/user-attachments/assets/618057c9-a4c7-4a21-acde-b805c1a2c869" />
+<img width="1349" height="561" alt="image" src="https://github.com/user-attachments/assets/70df3275-2575-4204-96da-67a9b371da2b" />
+<img width="1349" height="738" alt="image" src="https://github.com/user-attachments/assets/50c11b41-1f40-4f77-b8b3-cdb660d3a677" />
+
+### Test Case C (16 blocks, 16 words)
+<img width="1349" height="340" alt="image" src="https://github.com/user-attachments/assets/83827593-cc7b-409b-9257-e56904d77301" />
+<img width="1346" height="564" alt="image" src="https://github.com/user-attachments/assets/86315317-09e0-46ed-a392-ae74a4d54719" />
+<img width="1342" height="736" alt="image" src="https://github.com/user-attachments/assets/b8942173-5518-4062-9ab6-a0296c60f21f" />
 
 ## Notes
 
