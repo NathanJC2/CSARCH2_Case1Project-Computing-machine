@@ -85,10 +85,12 @@ export class Cache {
   }
 
   getSetForBlock(blockNumber) {
+    // find which set this block maps to using modulo
     return this.sets[blockNumber % this.setCount];
   }
 
   getTagForBlock(blockNumber) {
+    // calculate the tag to identify blocks within each set
     return Math.floor(blockNumber / this.setCount);
   }
 
@@ -112,6 +114,8 @@ export class Cache {
     this.resetHighlights();
 
     if (matchingLine) {
+      // cache hit
+      // block is already in cache, just update access time
       matchingLine.touch(accessTime);
       matchingLine.highlight = "hit";
       result.hit = true;
@@ -119,6 +123,8 @@ export class Cache {
       return result;
     }
 
+    // cache miss
+    // select victim line and load block into cache
     const victimIndex = set.getVictimIndex();
     const victimLine = set.lines[victimIndex];
     result.victim = victimLine.valid ? victimLine.blockNumber : null;

@@ -102,11 +102,13 @@ export class Simulator {
     const blockCount = this.config.cacheBlocks;
     const testCase = this.config.testCase;
 
+    // test A: access blocks 0 to 2n-1, then repeat the same sequence
     if (testCase === "sequential") {
       const base = Array.from({ length: 2 * blockCount }, (_, index) => index);
       return [...base, ...base];
     }
 
+    // test B: complex pattern mixing ascending and descending sequences to test cache behavior
     if (testCase === "mid-repeat") {
       const ascending = Array.from({ length: blockCount }, (_, index) => index);
       const extended = Array.from({ length: 2 * blockCount }, (_, index) => index);
@@ -115,6 +117,7 @@ export class Simulator {
       return [...ascending, ...extended, ...extended, ...descending, ...extendedDescending, ...extendedDescending];
     }
 
+    // test C: generate 64 random block accesses in range 0-1023
     const seed = this.config.randomSeed ?? 42;
     const random = this.createRandom(seed);
     return Array.from({ length: 64 }, () => Math.floor(random() * 1024));
@@ -141,6 +144,7 @@ export class Simulator {
     this.reset();
     const sequence = this.generateSequence();
 
+    // process each memory access and track results
     for (let step = 0; step < sequence.length; step += 1) {
       const blockNumber = sequence[step];
       const result = this.cache.accessBlock(blockNumber, step + 1);
@@ -157,6 +161,7 @@ export class Simulator {
         message: result.message,
       });
 
+      // show live updates if step-by-step mode is enabled
       if (animationMode === "step") {
         if (typeof onStep === "function") {
           try {

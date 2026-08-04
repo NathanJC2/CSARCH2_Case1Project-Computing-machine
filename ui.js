@@ -205,6 +205,7 @@ export class App {
   }
 
   normalizeCacheBlocks(value) {
+    // minimum of 4 blocks and round up to multiple of 8 for 8-way cache
     if (!Number.isFinite(value) || value < 4) {
       return 16;
     }
@@ -213,6 +214,7 @@ export class App {
   }
 
   normalizeBlockSize(value) {
+    // minimum of 2 words and round up to nearest power of 2
     if (!Number.isFinite(value) || value < 2) {
       return 4;
     }

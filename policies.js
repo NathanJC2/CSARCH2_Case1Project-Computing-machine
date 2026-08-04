@@ -26,6 +26,7 @@ export class LRUPolicy extends ReplacementPolicy {
   }
 
   selectVictim(lines) {
+    // Use empty line first, else remove the oldest (LRU)
     const invalidIndex = this.findEmptyLine(lines);
     if (invalidIndex !== -1) {
       return invalidIndex;
@@ -46,6 +47,7 @@ export class MRUPolicy extends ReplacementPolicy {
   }
 
   selectVictim(lines) {
+    // Use empty line first, else remove the most recent (MRU)
     const invalidIndex = this.findEmptyLine(lines);
     if (invalidIndex !== -1) {
       return invalidIndex;
