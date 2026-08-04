@@ -11,6 +11,10 @@ export class ReplacementPolicy {
     throw new Error("Replacement policy must implement selectVictim.");
   }
 
+  findEmptyLine(lines) {
+    return lines.findIndex((line) => !line.valid);
+  }
+
   updateAccess(line, accessTime) {
     line.touch(accessTime);
   }
@@ -22,7 +26,7 @@ export class LRUPolicy extends ReplacementPolicy {
   }
 
   selectVictim(lines) {
-    const invalidIndex = lines.findIndex((line) => !line.valid);
+    const invalidIndex = this.findEmptyLine(lines);
     if (invalidIndex !== -1) {
       return invalidIndex;
     }
@@ -42,7 +46,7 @@ export class MRUPolicy extends ReplacementPolicy {
   }
 
   selectVictim(lines) {
-    const invalidIndex = lines.findIndex((line) => !line.valid);
+    const invalidIndex = this.findEmptyLine(lines);
     if (invalidIndex !== -1) {
       return invalidIndex;
     }
