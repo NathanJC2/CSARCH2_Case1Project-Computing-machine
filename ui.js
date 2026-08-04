@@ -205,16 +205,15 @@ export class App {
   }
 
   normalizeCacheBlocks(value) {
-    // minimum of 4 blocks and round up to multiple of 8 for 8-way cache
+    // minimum of 4 blocks and round up to the next power of 2
     if (!Number.isFinite(value) || value < 4) {
       return 16;
     }
-    const compatibleValue = Math.ceil(value / 8) * 8;
-    return compatibleValue >= 4 ? compatibleValue : 4;
+    return this.nextPowerOfTwo(value);
   }
 
   normalizeBlockSize(value) {
-    // minimum of 2 words and round up to nearest power of 2
+    // minimum of 2 words and round up to the next power of 2
     if (!Number.isFinite(value) || value < 2) {
       return 4;
     }

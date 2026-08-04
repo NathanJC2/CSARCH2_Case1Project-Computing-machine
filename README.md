@@ -15,8 +15,8 @@ This project is a web-based simulator for Machine 9, an 8-way set-associative ca
 
 - Main memory size: 1024 blocks
 - Cache organization: 8-way set associative
-- Cache block count: configurable
-- Block size: configurable in words
+- Cache block count: configurable, minimum 4 blocks, power of 2
+- Block size: configurable in words, minimum 2 words, power of 2
 - Replacement policies: LRU and MRU
 - Read policy selector: load-through and non-load-through
 - Test cases: sequential, mid-repeat, and random
@@ -96,4 +96,5 @@ The sample output files in [docs/sample-output.txt](docs/sample-output.txt) and 
 
 - The project focuses on Machine 9 only.
 - The sample outcomes depend on the selected cache size, block size, access times, read policy, and random seed.
+- Main memory size is fixed at 1024 blocks.
 - The simulator is intended to support analysis, screenshots, and a walkthrough video for the project submission.

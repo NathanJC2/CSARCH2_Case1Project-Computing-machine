@@ -62,8 +62,8 @@ export class CacheSet {
 }
 
 export class Cache {
-  constructor(cacheBlocks, blockSize, replacementPolicy, readPolicy, ways = 8, mainMemoryBlocks = 1024) {
-    this.mainMemoryBlocks = mainMemoryBlocks;
+  constructor(cacheBlocks, blockSize, replacementPolicy, readPolicy, ways = 8) {
+    this.mainMemoryBlocks = 1024;
     this.cacheBlocks = cacheBlocks;
     this.blockSize = blockSize;
     this.ways = ways;
